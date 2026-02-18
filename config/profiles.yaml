@@ -1,0 +1,9 @@
+# Profile Configuration
+# Defines which AWS profiles to scan
+
+profiles:
+  - name: default
+    description: default AWS profile
+    enabled: true
+  
+  

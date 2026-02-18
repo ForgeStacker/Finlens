@@ -1,0 +1,333 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Black + Apple Material Liquid Glass Theme */
+    --background: 0 0% 0%;
+    --background-solid: 0 0% 0%;
+    --foreground: 0 0% 100%;
+
+    --card: 0 0% 8%;
+    --card-solid: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 12%;
+    --popover-solid: 0 0% 12%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 0 0% 15%;
+    --secondary-solid: 0 0% 15%;
+    --secondary-foreground: 0 0% 90%;
+
+    --muted: 0 0% 20%;
+    --muted-solid: 0 0% 20%;
+    --muted-foreground: 0 0% 70%;
+
+    --accent: 0 0% 90%;
+    --accent-foreground: 0 0% 10%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 0 0% 25%;
+    --input: 0 0% 25%;
+    --ring: 0 0% 100%;
+
+    --radius: 1.25rem;
+
+    --sidebar-background: 0 0% 3%;
+    --sidebar-background-solid: 0 0% 3%;
+    --sidebar-foreground: 0 0% 85%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-solid: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 0 0% 100%;
+
+    /* Apple liquid glass effects */
+    --glass: 0 0% 15%;
+    --glass-border: 0 0% 30%;
+    --glass-backdrop: blur(24px) saturate(180%);
+    --glow-primary: 0 0% 100%;
+    --glow-accent: 0 0% 90%;
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 10% / 0.4), hsl(0 0% 5% / 0.7));
+    --gradient-sidebar: linear-gradient(180deg, hsl(0 0% 5% / 0.9), hsl(0 0% 2% / 0.95));
+    --gradient-header: linear-gradient(90deg, hsl(0 0% 3% / 0.95), hsl(0 0% 6% / 0.8));
+    --gradient-background: radial-gradient(ellipse at top, hsl(0 0% 2%), hsl(0 0% 0%));
+    --shadow-card: 0 8px 40px -12px hsl(0 0% 0% / 0.8);
+    --shadow-glow: 0 0 60px hsl(0 0% 100% / 0.03);
+    --shadow-glass: 0 8px 40px -12px hsl(0 0% 0% / 0.6), inset 0 1px 0 hsl(0 0% 30% / 0.1);
+  }
+
+  .dark {
+    /* Same as root - pure black theme */
+    --background: 0 0% 0%;
+    --background-solid: 0 0% 0%;
+    --foreground: 0 0% 100%;
+
+    --card: 0 0% 8%;
+    --card-solid: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 12%;
+    --popover-solid: 0 0% 12%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 0 0% 15%;
+    --secondary-solid: 0 0% 15%;
+    --secondary-foreground: 0 0% 90%;
+
+    --muted: 0 0% 20%;
+    --muted-solid: 0 0% 20%;
+    --muted-foreground: 0 0% 70%;
+
+    --accent: 0 0% 90%;
+    --accent-foreground: 0 0% 10%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 0 0% 25%;
+    --input: 0 0% 25%;
+    --ring: 0 0% 100%;
+
+    --sidebar-background: 0 0% 3%;
+    --sidebar-background-solid: 0 0% 3%;
+    --sidebar-foreground: 0 0% 85%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-solid: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 0 0% 100%;
+
+    --glass: 0 0% 15%;
+    --glass-border: 0 0% 30%;
+    --glass-backdrop: blur(24px) saturate(180%);
+    --glow-primary: 0 0% 100%;
+    --glow-accent: 0 0% 90%;
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 10% / 0.4), hsl(0 0% 5% / 0.7));
+    --gradient-sidebar: linear-gradient(180deg, hsl(0 0% 5% / 0.9), hsl(0 0% 2% / 0.95));
+    --gradient-header: linear-gradient(90deg, hsl(0 0% 3% / 0.95), hsl(0 0% 6% / 0.8));
+    --gradient-background: radial-gradient(ellipse at top, hsl(0 0% 2%), hsl(0 0% 0%));
+    --shadow-card: 0 8px 40px -12px hsl(0 0% 0% / 0.8);
+    --shadow-glow: 0 0 60px hsl(0 0% 100% / 0.03);
+    --shadow-glass: 0 8px 40px -12px hsl(0 0% 0% / 0.6), inset 0 1px 0 hsl(0 0% 30% / 0.1);
+  }
+
+  :root:not(.dark) {
+    /* Light mode - clean white with subtle Apple-style shadows */
+    --background: 0 0% 98%;
+    --background-solid: 0 0% 100%;
+    --foreground: 0 0% 5%;
+
+    --card: 0 0% 100%;
+    --card-solid: 0 0% 100%;
+    --card-foreground: 0 0% 5%;
+
+    --popover: 0 0% 100%;
+    --popover-solid: 0 0% 100%;
+    --popover-foreground: 0 0% 5%;
+
+    --primary: 212 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 96%;
+    --secondary-solid: 0 0% 96%;
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 0 0% 94%;
+    --muted-solid: 0 0% 94%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 120 100% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 0 0% 85% / 0.6;
+    --input: 0 0% 90% / 0.8;
+    --ring: 212 100% 50%;
+
+    --sidebar-background: 0 0% 99%;
+    --sidebar-background-solid: 0 0% 99%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-primary: 212 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-solid: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 85% / 0.4;
+    --sidebar-ring: 212 100% 50%;
+
+    --glass: 0 0% 100% / 0.3;
+    --glass-border: 0 0% 85% / 0.4;
+    --glass-backdrop: blur(20px) saturate(180%);
+    --glow-primary: 212 100% 50% / 0.15;
+    --glow-accent: 120 100% 40% / 0.1;
+    --gradient-card: linear-gradient(135deg, 
+      hsl(0 0% 100% / 0.9) 0%, 
+      hsl(0 0% 98% / 0.95) 50%, 
+      hsl(0 0% 100% / 0.9) 100%);
+    --gradient-sidebar: linear-gradient(180deg, 
+      hsl(0 0% 98% / 0.95) 0%, 
+      hsl(0 0% 100% / 0.98) 100%);
+    --gradient-header: linear-gradient(90deg, 
+      hsl(0 0% 99% / 0.95) 0%, 
+      hsl(0 0% 98% / 0.9) 100%);
+    --gradient-background: linear-gradient(135deg, hsl(0 0% 98%), hsl(0 0% 100%));
+    --shadow-card: 0 1px 3px hsl(0 0% 0% / 0.1), 0 8px 24px hsl(0 0% 0% / 0.06);
+    --shadow-glow: 0 0 40px hsl(212 100% 50% / 0.1);
+    --shadow-glass: 
+      0 1px 3px hsl(0 0% 0% / 0.08),
+      0 8px 24px hsl(0 0% 0% / 0.04),
+      inset 0 1px 0 hsl(0 0% 100% / 0.8),
+      inset 0 -1px 0 hsl(0 0% 0% / 0.05);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply text-foreground font-sans antialiased;
+    background: var(--gradient-background);
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted));
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: linear-gradient(135deg,
+      hsl(var(--card-solid) / 0.78) 0%,
+      hsl(var(--background-solid) / 0.9) 100%
+    );
+    backdrop-filter: var(--glass-backdrop);
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: var(--shadow-glass);
+  }
+
+  .liquid-glass {
+    background: var(--gradient-card);
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: var(--shadow-glass);
+    border-radius: var(--radius);
+  }
+
+  .glass-card {
+    background: var(--gradient-card);
+    backdrop-filter: var(--glass-backdrop);
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: var(--shadow-glass);
+    position: relative;
+    border-radius: var(--radius);
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg,
+      hsl(var(--foreground) / 0.04) 0%,
+      transparent 50%, 
+      hsl(212 100% 50% / 0.02) 100%);
+    pointer-events: none;
+  }
+
+  .glow-primary {
+    box-shadow: var(--shadow-glow), var(--shadow-card);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 60px hsl(var(--glow-accent)), var(--shadow-card);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius);
+  }
+
+  .gradient-background {
+    background: var(--gradient-background);
+  }
+
+  .text-gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-white {
+    background: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 80%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-apple {
+    background: linear-gradient(135deg, hsl(212 100% 50%), hsl(120 100% 50%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  @keyframes liquid-shimmer {
+    0%, 100% { transform: translateX(-100%) skewX(-15deg); }
+    50% { transform: translateX(100%) skewX(-15deg); }
+  }
+}

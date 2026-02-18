@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: finlens-backend
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+      - ${HOME}/.aws:/root/.aws:ro  # Mount AWS credentials (use $HOME to work with sudo)
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1  # Force Python to print logs immediately
+    networks:
+      - finlens-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/api/discovery"]
+      interval: 10s
+      timeout: 5s
+      retries: 20  # Wait up to 3+ minutes for data collection + API startup
+      start_period: 30s  # Give data collection time to start
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: finlens-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8083
+    networks:
+      - finlens-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+networks:
+  finlens-network:
+    driver: bridge
+
+volumes:
+  finlens-data:

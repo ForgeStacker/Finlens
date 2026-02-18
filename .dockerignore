@@ -1,0 +1,45 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+README*
+
+# Node modules
+node_modules
+frontend/node_modules
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Build outputs
+frontend/dist
+frontend/build
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temp
+.tmp
+temp/
+
+# Environment
+.env
+.env.local
+
+# Cache
+.cache

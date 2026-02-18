@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+path/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# FinLens Specific
+.env
+.env.example
+FRONTEND_DEVELOPMENT_PROMPT.md
+data/
+cache/
+*.log
+finlens.log
+
+# Frontend
+frontend/node_modules/
+frontend/.vite/
+frontend/dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# AWS
+.aws/credentials
+.aws/config
+
+profiles/
