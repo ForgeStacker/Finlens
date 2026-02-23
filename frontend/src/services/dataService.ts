@@ -29,7 +29,7 @@ class DataService {
   private async simulateFileSystemRead(): Promise<DiscoverySnapshot> {
     try {
       console.log('🔍 Attempting to discover file system structure via API...');
-      const response = await fetch(`http://localhost:8083/api/discovery`);
+      const response = await fetch(`/api/discovery`);
       if (response.ok) {
         const data = await response.json() as DiscoveryStructure;
         console.log('✅ Discovery API returned:', data);
@@ -115,7 +115,7 @@ class DataService {
             }
             
             try {
-              const response = await fetch(`http://localhost:8083/api/data/${accountName}/${regionCode}/${serviceName}`);
+              const response = await fetch(`/api/data/${accountName}/${regionCode}/${serviceName}`);
               
               if (response.ok) {
                 const rawData = await response.json() as unknown;
@@ -158,7 +158,7 @@ class DataService {
           }
           
           try {
-            const response = await fetch(`http://localhost:8083/api/data/${accountName}/ap-south-1/${serviceName}`);
+            const response = await fetch(`/api/data/${accountName}/ap-south-1/${serviceName}`);
             if (response.ok) {
               const rawData = await response.json() as unknown;
               const serviceData = this.normalizeServiceData(rawData, accountName, fallbackRegion, serviceName);
@@ -608,7 +608,7 @@ class DataService {
     // Try to get real service data for health calculation
     let serviceData = null;
     try {
-      const response = await fetch(`http://localhost:8083/api/data/${accountName}/${regionCode}/${category}/${serviceName}`);
+      const response = await fetch(`/api/data/${accountName}/${regionCode}/${category}/${serviceName}`);
       if (response.ok) {
         const rawData = await response.json() as unknown;
         serviceData = this.normalizeServiceData(rawData, accountName, regionCode, serviceName);
@@ -668,7 +668,7 @@ class DataService {
     
     try {
       // Call the real API that reads from your actual JSON files  
-      const apiUrl = `http://localhost:8083/api/data/${accountName}/${regionCode}/${serviceName}`;
+      const apiUrl = `/api/data/${accountName}/${regionCode}/${serviceName}`;
       console.log(`Making API call to: ${apiUrl}`);
       
       const response = await fetch(apiUrl);
@@ -815,7 +815,7 @@ class DataService {
       for (const [categoryKey, serviceNames] of Object.entries(services)) {
         for (const serviceName of serviceNames as string[]) {
           try {
-            const response = await fetch(`http://localhost:8083/api/data/${accountName}/${regionCode}/${serviceName}`);
+            const response = await fetch(`/api/data/${accountName}/${regionCode}/${serviceName}`);
             if (response.ok) {
               const serviceData = await response.json() as BackendServiceDetail;
               const serviceDataRecord = serviceData as unknown as Record<string, unknown>;

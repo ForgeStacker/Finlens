@@ -14,6 +14,14 @@ export default defineConfig(() => ({
     watch: {
       usePolling: true, // Required for Docker file watching
     },
+    proxy: {
+      "/api": {
+        // In Docker: VITE_API_TARGET=http://backend:8000 (internal network)
+        // Locally: falls back to http://localhost:8000
+        target: process.env.VITE_API_TARGET || "http://localhost:8000",
+        changeOrigin: true,
+      },
+    },
   },
   plugins: [react()],
   resolve: {

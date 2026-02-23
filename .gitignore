@@ -56,3 +56,6 @@ Thumbs.db
 .aws/config
 
 profiles/
+
+# Generated scan output
+Data/

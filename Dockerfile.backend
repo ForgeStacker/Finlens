@@ -6,24 +6,24 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Set working directory — backend source lives here
 WORKDIR /app
 
-# Copy backend requirements
+# Copy and install Python requirements
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend source code
-COPY backend/ ./backend/
-COPY config/ ./config/
-COPY frontend/api_server.py ./
-COPY finlens.py ./
-
-# Create data directory
-RUN mkdir -p data
+# Copy backend source code directly into /app
+# (config.py's __file__-based path resolution will map Data/ → /Data, config/ → /config)
+COPY backend/ /app/
 
 # Expose API port
-EXPOSE 8083
+EXPOSE 8000
 
-# Default command runs the combined backend + API server
-CMD ["python3", "finlens.py", "--docker-mode"]
+# 1. Collect AWS data via service_info.py
+# 2. Start FastAPI server when collection is done
+CMD ["bash", "-c", \
+  "echo '=== Starting AWS data collection ===' && \
+   python3 service_info.py && \
+   echo '=== Data collection complete! Starting API server ===' && \
+   exec python3 -m uvicorn api_server:app --host 0.0.0.0 --port 8000"]

@@ -197,15 +197,15 @@ show_live_processing_logs() {
     compose logs -f backend | while IFS= read -r line; do
         echo "$line"
         
-        # Stop when SUCCESS message appears
-        if echo "$line" | grep -q "SUCCESS: Data collection completed"; then
+        # Stop when data collection finishes and API server starts
+        if echo "$line" | grep -q "Data collection complete"; then
             echo "═══════════════════════════════════════════════════════"
             echo "✅ 100% PROCESSING COMPLETE! Starting frontend..."
             break
         fi
         
-        # Also stop if API server is running
-        if echo "$line" | grep -q "API server process started"; then
+        # Also stop when uvicorn is up
+        if echo "$line" | grep -q "Application startup complete\|Uvicorn running"; then
             echo "═══════════════════════════════════════════════════════"
             echo "✅ API server started! Starting frontend..."
             break
@@ -237,9 +237,9 @@ wait_for_services() {
     local api_ready=false
     for i in {1..600}; do  # Wait up to 10 minutes for data collection + API startup
         # First check if API server is reachable
-        if curl -s --connect-timeout 5 http://localhost:8083/api/discovery >/dev/null 2>&1; then
+        if curl -s --connect-timeout 5 http://localhost:8000/api/discovery >/dev/null 2>&1; then
             # Then check if it has actual data
-            local response=$(curl -s --connect-timeout 5 http://localhost:8083/api/discovery 2>/dev/null)
+            local response=$(curl -s --connect-timeout 5 http://localhost:8000/api/discovery 2>/dev/null)
             if echo "$response" | grep -q "accounts\|profile" 2>/dev/null; then
                 echo "✅ Data processing 100% complete! API server serving data!"
                 api_ready=true
@@ -293,10 +293,10 @@ compose down --remove-orphans >/dev/null 2>&1 || true
 docker_cmd container prune -f >/dev/null 2>&1 || true
 
 echo "🧽 Clearing previous scan data..."
-if [ -d "data" ]; then
-    if ! rm -rf data/* >/dev/null 2>&1; then
+if [ -d "Data" ]; then
+    if ! rm -rf Data/* >/dev/null 2>&1; then
         echo "⚠️  Direct cleanup failed due to permissions; retrying with Docker..."
-        docker_cmd run --rm -v "$PWD/data:/data" alpine sh -c "rm -rf /data/*" >/dev/null 2>&1 || true
+        docker_cmd run --rm -v "$PWD/Data:/data" alpine sh -c "rm -rf /data/*" >/dev/null 2>&1 || true
     fi
 fi
 
@@ -331,8 +331,8 @@ wait_for_services
 echo ""
 echo "🎯 FinLens is running!"
 echo "📊 Dashboard: http://localhost:5173"
-echo "🔧 API: http://localhost:8083"
+echo "🔧 API:       http://localhost:8000"
 echo "📋 View logs: $COMPOSE_DISPLAY_CMD logs -f"
-echo "🛑 Stop: $COMPOSE_DISPLAY_CMD down"
+echo "🛑 Stop:      $COMPOSE_DISPLAY_CMD down"
 echo ""
 echo "✅ Complete sequential processing finished successfully!"

@@ -7,22 +7,22 @@ services:
       dockerfile: Dockerfile.backend
     container_name: finlens-backend
     ports:
-      - "8083:8083"
+      - "8000:8000"
     volumes:
-      - ./data:/app/data
-      - ./config:/app/config
-      - ${HOME}/.aws:/root/.aws:ro  # Mount AWS credentials (use $HOME to work with sudo)
+      - ./Data:/Data                          # Data/{account}/{region}/ output
+      - ./config:/config:ro                   # profiles.yaml, regions.yaml, services.yaml
+      - ${HOME}/.aws:/root/.aws:ro            # AWS credentials
     environment:
       - PYTHONPATH=/app
-      - PYTHONUNBUFFERED=1  # Force Python to print logs immediately
+      - PYTHONUNBUFFERED=1
     networks:
       - finlens-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8083/api/discovery"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/discovery"]
       interval: 10s
       timeout: 5s
-      retries: 20  # Wait up to 3+ minutes for data collection + API startup
-      start_period: 30s  # Give data collection time to start
+      retries: 30
+      start_period: 30s
 
   frontend:
     build:
@@ -32,7 +32,11 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_BASE_URL=http://localhost:8083
+      # Vite proxy forwards /api → this URL (inside Docker network)
+      - VITE_API_TARGET=http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
     networks:
       - finlens-network
     healthcheck:
@@ -45,6 +49,3 @@ services:
 networks:
   finlens-network:
     driver: bridge
-
-volumes:
-  finlens-data:
