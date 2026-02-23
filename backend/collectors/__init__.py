@@ -17,7 +17,6 @@ from .elasticache import collect_elasticache
 from .elb import collect_elb
 from .glue import collect_glue
 from .iam import collect_iam
-from .kafka import collect_kafka
 from .kinesis import collect_kinesis
 from .kms import collect_kms
 from .lambda_service import collect_lambda
@@ -128,7 +127,7 @@ COLLECTOR_FUNCTIONS = {
     "Kinesis": collect_kinesis,
     "KMS": collect_kms,
     "Lambda": collect_lambda,
-    "Kafka": collect_kafka,
+    "Kafka": collect_msk,
     "MSK": collect_msk,
     "RDS": collect_rds,
     "Route53": collect_route53,
@@ -219,7 +218,6 @@ __all__ = [
     "collect_elb",
     "collect_glue",
     "collect_iam",
-    "collect_kafka",
     "collect_kinesis",
     "collect_kms",
     "collect_lambda",

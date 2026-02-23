@@ -3,7 +3,7 @@
 
 profiles:
   - name: default
-    description: Default AWS profile
+    description: default AWS profile
     enabled: true
 
 

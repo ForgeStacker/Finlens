@@ -12,73 +12,73 @@ list:
   - elasticip
   - route53
   - cloudfront
-  - vpcpeering
+  # - vpcpeering
   # Database
   - rds
   - dynamodb
   - elasticache
   - redshift
-  - neptune
-  - docdb
+  # - neptune
+  # - docdb
   # Containers
   - eks
   # # Analytics & Big Data
   - athena
-  - glue
-  - emr
-  - kinesis
-  - opensearch
-  - quicksight
+  # - glue
+  # - emr
+  # - kinesis
+  # - opensearch
+  # - quicksight
   # # Application Integration
   - sqs
   - sns
-  - eventbridge
+  # - eventbridge
   - stepfunctions
   - apigateway
   - ses
   # # AI & Machine Learning
-  - comprehend
-  - lex
-  - polly
-  - textract
-  - sagemaker
-  - rekognition
+  # - comprehend
+  # - lex
+  # - polly
+  # - textract
+  # - sagemaker
+  # - rekognition
   # Migration & Transfer
-  - migrationhub
-  - datasync
-  - snowball
-  - transfer
-  - mgn
-  - dms
+  # - migrationhub
+  # - datasync
+  # - snowball
+  # - transfer
+  # - mgn
+  # - dms
   
-  - DevOps Tools
-  - codecommit
-  - codebuild
-  - codedeploy
-  - codepipeline
-  - cloudformation
+  # #DevOps Tools
+  # - codecommit
+  # - codebuild
+  # - codedeploy
+  # - codepipeline
+  # - cloudformation
   
   # # Management & Governance
   - cloudtrail
   - config
   - ssm
-  - controltower
-  - servicecatalog
+  # - controltower
+  # - servicecatalog
   
   # # Cost Management
   - costexplorer
   - budgets
-  - cur
-  - savingsplans
-  - reservedinstances
-  - computeoptimizer
+  # - cur
+  # - savingsplans
+  # - reservedinstances
+  # - computeoptimizer
   
   # # Storage
   - s3
   - ebs
   - snapshot
   - efs
-  - storagegateway
+  # - storagegateway
   - ecr
   # # Security & Identity
   - iam
@@ -87,15 +87,15 @@ list:
   - secretsmanager
   - acm
   - waf
-  - shield
-  - guardduty
-  - inspector
+  # - shield
+  # - guardduty
+  # - inspector
   
   # # Monitoring & Logging
   - cloudwatch
   # Compute
   - lambda
   - asg
-  - elasticbeanstalk
+  # - elasticbeanstalk
   - ecs
   - ami
