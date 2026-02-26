@@ -61,25 +61,53 @@ import documentdbIcon from '/src/assets/aws-icons/Arch_Amazon-DocumentDB_64.svg'
 import neptuneIcon from '/src/assets/aws-icons/Arch_Amazon-Neptune_64.svg';
 import organizationsIcon from '/src/assets/aws-icons/Arch_AWS-Organizations_64.svg';
 import sesIcon from '/src/assets/aws-icons/Arch_Amazon-SES_64.svg';
+// Additional icons
+import asgIcon from '/src/assets/aws-icons/Arch_Amazon-EC2-Auto-Scaling_64.svg';
+import amiIcon from '/src/assets/aws-icons/Arch_Amazon-EC2-Image-Builder_64.svg';
+import elasticBeanstalkIcon from '/src/assets/aws-icons/Arch_AWS-Elastic-Beanstalk_64.svg';
+import fargateIcon from '/src/assets/aws-icons/Arch_AWS-Fargate_64.svg';
+import budgetsIcon from '/src/assets/aws-icons/Arch_AWS-Budgets_64.svg';
+import curIcon from '/src/assets/aws-icons/Arch_AWS-Cost-and-Usage-Report_64.svg';
+import reservedInstancesIcon from '/src/assets/aws-icons/Arch_Reserved-Instance-Reporting_64.svg';
+import savingsPlansIcon from '/src/assets/aws-icons/Arch_Savings-Plans_64.svg';
+import auroraIcon from '/src/assets/aws-icons/Arch_Amazon-Aurora_64.svg';
+import dmsIcon from '/src/assets/aws-icons/Arch_AWS-Database-Migration-Service_64.svg';
+import controlTowerIcon from '/src/assets/aws-icons/Arch_AWS-Control-Tower_64.svg';
+import inspectorIcon from '/src/assets/aws-icons/Arch_Amazon-Inspector_64.svg';
+import mgnIcon from '/src/assets/aws-icons/Arch_AWS-Application-Migration-Service_64.svg';
+import directConnectIcon from '/src/assets/aws-icons/Arch_AWS-Direct-Connect_64.svg';
+import transitGatewayIcon from '/src/assets/aws-icons/Arch_AWS-Transit-Gateway_64.svg';
+import mskIcon from '/src/assets/aws-icons/Arch_Amazon-MSK_64.svg';
 
 // Map AWS service names to their icon files
 const serviceIconMap: Record<string, string> = {
   // Compute
   'ec2': ec2Icon,
+  'ami': amiIcon,
+  'asg': asgIcon,
+  'autoscaling': asgIcon,
+  'ec2autoscaling': asgIcon,
+  'elasticbeanstalk': elasticBeanstalkIcon,
+  'elasticip': ec2Icon,
+  'elasticips': ec2Icon,
   'eks': eksIcon,
   'lambda': lambdaIcon,
   'ecs': ecsIcon,
   'ecr': ecrIcon,
+  'fargate': fargateIcon,
   'computeoptimizer': computeOptimizerIcon,
   
   // Database
   'rds': rdsIcon,
+  'aurora': auroraIcon,
   'dynamodb': dynamodbIcon,
   'redshift': redshiftIcon,
   'elasticache': elasticacheIcon,
   'documentdb': documentdbIcon,
   'docdb': documentdbIcon,
   'neptune': neptuneIcon,
+  'dms': dmsIcon,
+  'databsemigrationservice': dmsIcon,
   
   // Storage
   's3': s3Icon,
@@ -96,6 +124,8 @@ const serviceIconMap: Record<string, string> = {
   'elbv2': elbIcon,
   'elasticloadbalancing': elbIcon,
   'apigateway': apiGatewayIcon,
+  'directconnect': directConnectIcon,
+  'transitgateway': transitGatewayIcon,
   
   // Security
   'iam': iamIcon,
@@ -105,6 +135,7 @@ const serviceIconMap: Record<string, string> = {
   'guardduty': guardDutyIcon,
   'waf': wafIcon,
   'acm': acmIcon,
+  'inspector': inspectorIcon,
   
   // Analytics
   'athena': athenaIcon,
@@ -124,13 +155,19 @@ const serviceIconMap: Record<string, string> = {
   
   // Management & Governance
   'cloudwatch': cloudwatchIcon,
+  'cloudwatchlogs': cloudwatchIcon,
+  'cloudwatch_logs': cloudwatchIcon,
+  'cloudwatchevents': eventbridgeIcon,
+  'cloudwatchevent': eventbridgeIcon,
   'cloudtrail': cloudtrailIcon,
   'cloudformation': cloudFormationIcon,
   'config': configIcon,
+  'awsconfig': configIcon,
   'ssm': ssmIcon,
   'trustedadvisor': trustedAdvisorIcon,
   'servicecatalog': serviceCatalogIcon,
   'organizations': organizationsIcon,
+  'controltower': controlTowerIcon,
   
   // Integration
   'sns': snsIcon,
@@ -148,10 +185,22 @@ const serviceIconMap: Record<string, string> = {
   // Migration & Transfer
   'datasync': datasyncIcon,
   'migrationhub': migrationhubIcon,
+  'mgn': mgnIcon,
+  'applicationmigrationservice': mgnIcon,
   
   // Cost Management
   'costexplorer': costExplorerIcon,
   'billing': billingConductorIcon,
+  'budgets': budgetsIcon,
+  'cur': curIcon,
+  'costandusagereport': curIcon,
+  'reservedinstances': reservedInstancesIcon,
+  'savingsplans': savingsPlansIcon,
+  
+  // Streaming & Messaging
+  'msk': mskIcon,
+  'kafka': mskIcon,
+  'amazonmanagedstreamingforapachekafka': mskIcon,
 };
 
 // Category icon mapping

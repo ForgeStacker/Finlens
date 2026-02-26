@@ -501,6 +501,9 @@ class DataService {
         resource_count: inferredCount,
         scan_status: 'success'
       },
+      columns: this.isRecord(rawData) && Array.isArray(rawData.columns)
+        ? (rawData.columns as string[])
+        : undefined,
       resources: inferredResources
     };
   }

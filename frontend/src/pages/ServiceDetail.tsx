@@ -31,6 +31,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
 const toTagArray = (value: unknown): TagItem[] => {
+  // already an array of {Key,Value}
   if (Array.isArray(value)) {
     return value
       .map((item) => {
@@ -46,10 +47,26 @@ const toTagArray = (value: unknown): TagItem[] => {
       .filter((item): item is TagItem => item !== null);
   }
 
+  // plain object { key: value }
   if (isRecord(value)) {
     return Object.entries(value)
       .filter(([, tagValue]) => typeof tagValue === "string")
       .map(([key, tagValue]) => ({ Key: key, Value: tagValue as string }));
+  }
+
+  // flat CSV string: "KEY=VALUE KEY2=VALUE2 KEY3=value with spaces"
+  if (typeof value === "string" && value.trim().length > 0) {
+    // Split on whitespace that is followed by a KEY= pattern (key has no spaces)
+    const segments = value.trim().split(/\s+(?=[^\s=]+=)/);
+    return segments
+      .map((seg) => {
+        const eqIdx = seg.indexOf("=");
+        if (eqIdx === -1) return null;
+        const k = seg.slice(0, eqIdx).trim();
+        const v = seg.slice(eqIdx + 1).trim();
+        return k ? { Key: k, Value: v } : null;
+      })
+      .filter((item): item is TagItem => item !== null);
   }
 
   return [];
@@ -100,7 +117,34 @@ interface Column {
   sortable: boolean;
 }
 
-// Dynamic column generation - show 7-9 columns by default
+/** Convert a snake_case / PascalCase / camelCase key to a human-readable label */
+function keyToLabel(key: string): string {
+  // Split on underscores, capitals, and digit boundaries
+  return key
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')   // ABCDef -> ABC Def
+    .replace(/([a-z\d])([A-Z])/g, '$1 $2')         // camelCase -> camel Case
+    .replace(/_/g, ' ')                             // snake_case -> snake case
+    .replace(/\b\w/g, (c) => c.toUpperCase())       // Title Case
+    .trim();
+}
+
+/** Number of columns visible by default; the rest are toggled via the Columns button. */
+const DEFAULT_VISIBLE_COUNT = 13;
+
+/**
+ * Build Column[] from the ordered list the API returned (same order as Excel).
+ * Only the first DEFAULT_VISIBLE_COUNT columns are shown by default.
+ */
+function buildColumnsFromApiOrder(apiColumns: string[]): Column[] {
+  return apiColumns.map((key, idx) => ({
+    key,
+    label: keyToLabel(key),
+    visible: idx < DEFAULT_VISIBLE_COUNT,
+    sortable: true,
+  }));
+}
+
+// Fallback when API doesn't return columns (old data format)
 function generateInitialColumns(): Column[] {
   return [
     { key: "resource_name", label: "Name", visible: true, sortable: true },
@@ -111,7 +155,7 @@ function generateInitialColumns(): Column[] {
     { key: "region", label: "Region", visible: true, sortable: true },
     { key: "instance_type", label: "Instance Type", visible: true, sortable: true },
     { key: "launch_time", label: "Created", visible: true, sortable: true },
-    { key: "vpc_id", label: "VPC ID", visible: true, sortable: true }
+    { key: "vpc_id", label: "VPC ID", visible: true, sortable: true },
   ];
 }
 
@@ -164,10 +208,10 @@ function CellValue({ value, colKey }: { value: unknown; colKey: string }) {
     );
   }
 
-  // Handle tags object
-  if (colKey === "tags") {
+  // Handle tags object — match "Tags", "tags", "TAGS" etc.
+  if (colKey.toLowerCase() === "tags") {
     const tagArray = toTagArray(value);
-    console.log("Tags processing:", { value, tagArray, count: tagArray.length });
+    if (tagArray.length === 0) return <span className="text-muted-foreground text-xs">—</span>;
     return (
       <div onClick={(e) => e.stopPropagation()}>
         <DataPopover data={tagArray} type="tags" title="Resource Tags" />
@@ -441,13 +485,18 @@ export default function ServiceDetail() {
         
         setServiceData(actualServiceData);
         
-        // Generate dynamic columns based on actual data structure
-        if (actualServiceData.resources && actualServiceData.resources.length > 0) {
-          const dynamicColumns = dataService.generateColumnsFromData(
-            actualServiceData.resources,
-            serviceName
-          );
-          setColumns(dynamicColumns);
+        // Use API-provided column order (matches Excel sheet column order exactly)
+        if (actualServiceData.columns && actualServiceData.columns.length > 0) {
+          setColumns(buildColumnsFromApiOrder(actualServiceData.columns));
+        } else if (actualServiceData.resources && actualServiceData.resources.length > 0) {
+          // Fallback: derive order from first resource's key insertion order
+          const inferredColumns = Object.keys(actualServiceData.resources[0]).map((key, idx) => ({
+            key,
+            label: keyToLabel(key),
+            visible: idx < DEFAULT_VISIBLE_COUNT,
+            sortable: true,
+          }));
+          setColumns(inferredColumns);
         }
       } catch (error) {
         console.error('Failed to load service data:', error);
@@ -458,6 +507,38 @@ export default function ServiceDetail() {
 
     loadServiceData();
   }, [serviceName, categoryKey, selectedAccount, selectedRegion]);
+
+  /** Download all resources as a CSV using current column order */
+  const exportToCsv = () => {
+    const resources = serviceData?.resources ?? [];
+    if (resources.length === 0) return;
+
+    // Use defined columns (all, not just visible) so the export is complete
+    const exportCols = columns.length > 0
+      ? columns
+      : Object.keys(resources[0]).map((k) => ({ key: k, label: k }));
+
+    const escape = (val: unknown): string => {
+      const s = val === null || val === undefined ? '' : String(val);
+      // If value contains comma, newline or quote — wrap in quotes and escape inner quotes
+      if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+      return s;
+    };
+
+    const header = exportCols.map((c) => escape(c.label)).join(',');
+    const rows = resources.map((row) =>
+      exportCols.map((c) => escape(row[c.key])).join(',')
+    );
+
+    const csv = [header, ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${serviceName || 'export'}_${selectedAccount?.name || 'account'}_${selectedRegion?.code || 'region'}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const visibleCols = columns.filter((c) => c.visible);
 
@@ -584,9 +665,7 @@ export default function ServiceDetail() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-4"
         >
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-            <AwsIcon service={serviceName || ''} size={24} className="text-primary" />
-          </div>
+          <AwsIcon service={serviceName || ''} size={52} className="rounded-2xl text-primary flex-shrink-0" />
           <div>
             <h1 className="text-xl font-bold">{serviceName ? formatServiceNameUppercase(serviceName) : 'Unknown Service'}</h1>
             <p className="text-sm text-muted-foreground">
@@ -647,9 +726,13 @@ export default function ServiceDetail() {
               </div>
             )}
           </div>
-          <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
+          <button
+            onClick={exportToCsv}
+            disabled={(serviceData?.resources?.length ?? 0) === 0}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
             <Download className="w-4 h-4" />
-            Export
+            Export CSV
           </button>
         </div>
 
@@ -675,7 +758,6 @@ export default function ServiceDetail() {
                       </div>
                     </th>
                   ))}
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tags</th>
                 </tr>
               </thead>
               <tbody>
@@ -706,11 +788,6 @@ export default function ServiceDetail() {
                           <CellValue value={row[col.key]} colKey={col.key} />
                         </td>
                       ))}
-                      <td className="px-4 py-3">
-                        <div onClick={(e) => e.stopPropagation()}>
-                          <DataPopover data={toTagArray(row["tags"])} type="tags" title="Resource Tags" />
-                        </div>
-                      </td>
                     </motion.tr>
                   );
                 })}

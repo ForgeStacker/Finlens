@@ -63,23 +63,40 @@ function CopyButton({ text, size = "sm" }: { text: string; size?: "sm" | "xs" })
   );
 }
 
+// Colour palette cycling through hues for key chips
+const TAG_CHIP_COLORS = [
+  "bg-blue-500/15 text-blue-400 border-blue-500/30",
+  "bg-violet-500/15 text-violet-400 border-violet-500/30",
+  "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+  "bg-amber-500/15 text-amber-400 border-amber-500/30",
+  "bg-rose-500/15 text-rose-400 border-rose-500/30",
+  "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
+  "bg-pink-500/15 text-pink-400 border-pink-500/30",
+  "bg-indigo-500/15 text-indigo-400 border-indigo-500/30",
+];
+
 function TagsContent({ data }: { data: TagItem[] }) {
   if (!data?.length) return <div className="text-muted-foreground text-sm">No tags</div>;
 
-  // Filter out empty tags
-  const validTags = data.filter(tag => tag.Key && tag.Value);
-  
-  if (!validTags.length) return <div className="text-muted-foreground text-sm">No valid tags</div>;
+  const validTags = data.filter(tag => tag.Key);
+  if (!validTags.length) return <div className="text-muted-foreground text-sm">No tags</div>;
 
   return (
     <div className="space-y-2">
       {validTags.map((tag, index) => (
-        <div key={index} className="flex justify-between items-start gap-3 p-2 rounded-lg bg-card/50 border border-border/40">
-          <div className="flex-1 min-w-0">
-            <div className="text-xs text-muted-foreground">{tag.Key}</div>
-            <div className="text-sm font-medium break-words">{tag.Value}</div>
+        <div
+          key={index}
+          className="rounded-lg border border-border/50 bg-card/60 overflow-hidden"
+        >
+          {/* Key row */}
+          <div className={`flex items-center justify-between px-3 py-1.5 border-b border-border/40 ${TAG_CHIP_COLORS[index % TAG_CHIP_COLORS.length]}`}>
+            <span className="text-[11px] font-semibold tracking-wide uppercase truncate">{tag.Key}</span>
+            <CopyButton text={`${tag.Key}=${tag.Value}`} size="xs" />
           </div>
-          <CopyButton text={`${tag.Key}=${tag.Value}`} size="xs" />
+          {/* Value row */}
+          <div className="px-3 py-2">
+            <span className="text-sm break-all leading-snug">{tag.Value || <span className="text-muted-foreground italic text-xs">empty</span>}</span>
+          </div>
         </div>
       ))}
     </div>
@@ -358,11 +375,15 @@ export function DataPopover({ data, type, trigger, title, className = "" }: Data
   const displayTrigger = trigger || (
     <button
       onClick={handleClick}
-      className="flex items-center gap-1 px-2 py-1 rounded-md bg-secondary text-xs hover:bg-secondary/80 transition-colors"
+      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors border ${
+        type === 'tags'
+          ? 'bg-primary/10 text-primary border-primary/25 hover:bg-primary/20'
+          : 'bg-secondary text-secondary-foreground border-border hover:bg-secondary/80'
+      }`}
     >
       <IconComponent className="w-3 h-3" />
       {defaultTriggers[type]?.(count) || `${count} items`}
-      <ChevronDown className="w-3 h-3" />
+      <ChevronDown className="w-3 h-3 opacity-60" />
     </button>
   );
 

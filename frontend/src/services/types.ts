@@ -41,6 +41,8 @@ export interface BackendServiceDetail {
   generated_at: string;
   service: ServiceMetadata;
   summary: ServiceSummary;
+  /** Column names in exact CSV/Excel order — provided by the backend */
+  columns?: string[];
   resources: ServiceResource[];
 }
 // Frontend types (enhanced from existing)

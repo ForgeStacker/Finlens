@@ -426,9 +426,7 @@ export default function ServiceAnalysis() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-4"
         >
-          <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center">
-            <AwsIcon service={serviceParam || ''} size={28} className="text-primary" />
-          </div>
+          <AwsIcon service={serviceParam || ''} size={56} className="rounded-2xl text-primary flex-shrink-0" />
           <div>
             <h1 className="text-2xl font-bold">
               {serviceParam ? formatServiceNameUppercase(serviceParam) : 'Service'} Analysis

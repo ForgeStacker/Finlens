@@ -40,9 +40,7 @@ function ServiceCard({ service, index }: { service: AWSService; index: number })
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
-            <AwsIcon service={service.serviceName} size={22} className="text-primary" />
-          </div>
+          <AwsIcon service={service.serviceName} size={44} className="rounded-2xl text-primary flex-shrink-0" />
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-semibold">{formatServiceName(service.name)}</h3>

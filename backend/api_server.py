@@ -704,16 +704,23 @@ async def get_data_by_region_service(account: str, region: str, service: str):
     try:
         if pd is not None:
             df = pd.read_csv(csv_file, dtype=str).fillna("")
+            # Preserve exact column order from CSV (same as Excel sheet order)
+            csv_columns: List[str] = df.columns.tolist()
             records: List[Dict[str, Any]] = df.to_dict(orient="records")
         else:
             with open(csv_file, "r", encoding="utf-8", newline="") as f:
                 reader = csv.DictReader(f)
                 records = [{k: (v or "") for k, v in row.items()} for row in reader]
+                csv_columns = list(reader.fieldnames or [])
 
         # Stamp Region column if absent
+        region_stamped = False
         for rec in records:
             if "Region" not in rec:
                 rec["Region"] = region
+                region_stamped = True
+        if region_stamped and "Region" not in csv_columns:
+            csv_columns.append("Region")
 
         return {
             "schema_version": "1.0.0",
@@ -727,6 +734,7 @@ async def get_data_by_region_service(account: str, region: str, service: str):
                 "resource_count": len(records),
                 "scan_status": "success",
             },
+            "columns": csv_columns,
             "resources": records,
         }
     except Exception as exc:
