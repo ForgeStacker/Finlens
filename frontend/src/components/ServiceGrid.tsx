@@ -161,10 +161,88 @@ export function ServiceGrid() {
     );
   }
 
-  // Flatten all services and filter by selected categories
-  const allServices = serviceCategories.flatMap(category => 
-    selectedCategories.includes(category.key) ? category.services : []
-  );
+  // Individual service priority — lower number appears first
+  const SERVICE_PRIORITY: Record<string, number> = {
+    rds: 1,
+    ec2: 2,
+    lambda: 3,
+    eks: 4,
+    s3: 5,
+    iam: 6,
+    vpc: 7,
+    elb: 8,
+    ecr: 9,
+    cloudwatchlogs: 10,
+    cloudwatchalarm: 11,
+    apigateway: 12,
+    sqs: 13,
+    sns: 14,
+    elasticache: 15,
+    secretsmanager: 16,
+    kms: 17,
+    kinesis: 18,
+    dms: 19,
+    cloudwatchevent: 20,
+    ecs: 21,
+    asg: 22,
+    ami: 23,
+    ebs: 24,
+    cloudwatch: 25,
+    snapshot: 26,
+    efs: 27,
+    dynamodb: 28,
+    redshift: 29,
+    cloudfront: 30,
+    route53: 31,
+    elasticip: 32,
+    acm: 33,
+    waf: 34,
+    guardduty: 35,
+    inspector: 36,
+    cloudtrail: 37,
+    config: 38,
+    cloudformation: 39,
+    ssm: 40,
+    controltower: 41,
+    eventbridge: 42,
+    stepfunctions: 43,
+    ses: 44,
+    athena: 45,
+    glue: 46,
+    emr: 47,
+    opensearch: 48,
+    costexplorer: 49,
+    budgets: 50,
+    cur: 51,
+    savingsplans: 52,
+    reservedinstances: 53,
+    computeoptimizer: 54,
+    codecommit: 55,
+    codebuild: 56,
+    codedeploy: 57,
+    codepipeline: 58,
+    migrationhub: 59,
+    datasync: 60,
+    mgn: 61,
+    docdb: 62,
+    neptune: 63,
+    aurora: 64,
+    msk: 65,
+    organizations: 66,
+    servicecatalog: 67,
+    elasticbeanstalk: 68,
+    fargate: 69,
+  };
+
+  const getPriority = (name: string) =>
+    SERVICE_PRIORITY[name.toLowerCase()] ?? 999;
+
+  // Flatten all services, filter by selected categories, then sort by priority
+  const allServices = serviceCategories
+    .flatMap(category =>
+      selectedCategories.includes(category.key) ? category.services : []
+    )
+    .sort((a, b) => getPriority(a.serviceName) - getPriority(b.serviceName));
 
   const totalServicesCount = serviceCategories.reduce((sum, cat) => sum + cat.services.length, 0);
   const activeCategoriesCount = serviceCategories.filter(cat => selectedCategories.includes(cat.key)).length;
