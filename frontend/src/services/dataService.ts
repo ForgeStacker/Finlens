@@ -508,103 +508,57 @@ class DataService {
     };
   }
 
-  private calculateServiceHealth(serviceName: string, serviceData: BackendServiceDetail | null): { healthPercent: number, scanStatus: 'success' | 'failed' | 'partial' } {
-    if (!serviceData || !serviceData.summary) {
+  private calculateServiceHealth(_serviceName: string, serviceData: BackendServiceDetail | null): { healthPercent: number, scanStatus: 'success' | 'failed' | 'partial' } {
+    if (!serviceData) {
       return { healthPercent: 0, scanStatus: 'failed' };
     }
 
-    const summary = serviceData.summary;
-    const resourceCount = typeof summary.resource_count === 'number' ? summary.resource_count : 0;
-    const normalizedStatus = this.normalizeScanStatus(summary.scan_status);
+    const resources = serviceData.resources ?? [];
+    const total = resources.length;
 
-    if (normalizedStatus === 'failed' || resourceCount === 0) {
-      return {
-        healthPercent: resourceCount === 0 ? 100 : 0,
-        scanStatus: resourceCount === 0 ? 'success' : 'failed'
-      };
+    if (total === 0) {
+      return { healthPercent: 100, scanStatus: 'success' };
     }
 
-    let healthScore = 100;
-    let scanStatus: 'success' | 'failed' | 'partial' = normalizedStatus === 'partial' ? 'partial' : 'success';
+    // State/Status field names to check (in priority order)
+    const stateFields = ['State', 'state', 'Status', 'status', 'ClusterStatus', 'DBStatus', 'AttachmentState'];
 
-    switch (serviceName) {
-      case 'ec2': {
-        const stateDistribution = this.asNumberRecord(summary['state_distribution']);
-        if (stateDistribution) {
-          const running = stateDistribution.running ?? 0;
-          const stopped = stateDistribution.stopped ?? 0;
-          const terminated = stateDistribution.terminated ?? 0;
-          healthScore = resourceCount > 0 ? Math.round((running / resourceCount) * 100) : 0;
-          if (stopped > 0) {
-            scanStatus = 'partial';
-          }
-          if (terminated > 0) {
-            healthScore = Math.max(0, healthScore - 20);
-          }
-        }
+    // Values considered active/running
+    const activeValues = new Set([
+      'running', 'active', 'available', 'in-use', 'in use', 'enabled',
+      'attached', 'healthy', 'succeeded', 'online', 'ok', 'optimized',
+      'create complete', 'deployed', 'update complete'
+    ]);
+
+    // Find first matching state field
+    let stateField: string | null = null;
+    const firstResource = resources[0] as Record<string, unknown>;
+    for (const field of stateFields) {
+      if (firstResource && field in firstResource) {
+        stateField = field;
         break;
       }
-
-      case 'rds': {
-        const statusDistribution = this.asNumberRecord(summary['status_distribution']);
-        if (statusDistribution) {
-          const available = statusDistribution.available ?? 0;
-          healthScore = resourceCount > 0 ? Math.round((available / resourceCount) * 100) : 0;
-          if (available < resourceCount) {
-            scanStatus = 'partial';
-          }
-        }
-        break;
-      }
-
-      case 'cloudtrail': {
-        const loggingEnabled = this.getNumericValue(summary['logging_enabled']);
-        const totalTrails = this.getNumericValue(summary['total_trails']);
-        if (totalTrails === 0) {
-          healthScore = 0;
-          scanStatus = 'failed';
-        } else {
-          healthScore = Math.round((loggingEnabled / totalTrails) * 100);
-          if (loggingEnabled < totalTrails) {
-            scanStatus = 'partial';
-          }
-        }
-        break;
-      }
-
-      case 'vpc': {
-        const isDefault = summary['is_default'];
-        if (typeof isDefault === 'boolean') {
-          healthScore = isDefault ? 70 : 100;
-          if (isDefault) {
-            scanStatus = 'partial';
-          }
-        }
-        break;
-      }
-
-      case 's3': {
-        const encryptionStatus = this.isRecord(summary['encryption_status']) ? summary['encryption_status'] : undefined;
-        if (encryptionStatus) {
-          const encrypted = this.getNumericValue(encryptionStatus['encrypted']);
-          healthScore = resourceCount > 0 ? Math.round((encrypted / resourceCount) * 100) : 0;
-          if (encrypted < resourceCount) {
-            scanStatus = 'partial';
-          }
-        }
-        break;
-      }
-
-      default:
-        if (normalizedStatus === 'success') {
-          healthScore = resourceCount > 0 ? 95 : 100;
-        } else {
-          healthScore = 75;
-          scanStatus = 'partial';
-        }
     }
 
-    return { healthPercent: Math.max(0, Math.min(100, healthScore)), scanStatus };
+    if (!stateField) {
+      // No state field — assume all resources are active
+      return { healthPercent: 100, scanStatus: 'success' };
+    }
+
+    let activeCount = 0;
+    for (const resource of resources) {
+      const val = String((resource as Record<string, unknown>)[stateField] ?? '').toLowerCase().trim();
+      if (activeValues.has(val)) {
+        activeCount++;
+      }
+    }
+
+    const healthPercent = Math.round((activeCount / total) * 100);
+    const scanStatus: 'success' | 'failed' | 'partial' =
+      healthPercent === 100 ? 'success' :
+      healthPercent > 0 ? 'partial' : 'failed';
+
+    return { healthPercent, scanStatus };
   }
 
   private async createServiceModelWithData(serviceName: string, category: string, accountName: string, regionCode: string, resourceCount: number = 0): Promise<AWSService> {

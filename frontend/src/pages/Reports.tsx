@@ -139,7 +139,7 @@ function TopServicesTable({ services }: { services: ServiceMetrics[] }) {
               <th className="text-left py-3 text-muted-foreground font-medium">Service</th>
               <th className="text-left py-3 text-muted-foreground font-medium">Category</th>
               <th className="text-right py-3 text-muted-foreground font-medium">Resources</th>
-              <th className="text-right py-3 text-muted-foreground font-medium">Health</th>
+              <th className="text-right py-3 text-muted-foreground font-medium">Active</th>
               <th className="text-center py-3 text-muted-foreground font-medium">Status</th>
             </tr>
           </thead>

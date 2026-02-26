@@ -57,21 +57,13 @@ function ServiceCard({ service, index }: { service: AWSService; index: number })
           <span className="text-xl font-bold">{service.resourceCount}</span>
           <span className="text-xs text-muted-foreground ml-1">{service.resourceCount === 1 ? 'Resource' : 'Resources'}</span>
         </div>
-        <div className="text-xs">
-          <span className={`font-medium ${
-            service.resourceCount === 0 ? 'text-muted-foreground' : 
-            service.activeCount === service.resourceCount ? 'text-success' :
-            service.activeCount > 0 ? 'text-warning' : 'text-muted-foreground'
-          }`}>{service.activeCount}</span>
-          <span className="text-muted-foreground ml-1">Active</span>
-        </div>
       </div>
 
-      {/* Health Bar */}
+      {/* Active Bar */}
       {service.resourceCount > 0 ? (
         <div className="mb-3">
           <div className="flex items-center justify-between text-[10px] mb-1">
-            <span className="text-muted-foreground">Health</span>
+            <span className="text-muted-foreground">Active</span>
             <span className="font-medium">{service.healthPercent}%</span>
           </div>
           <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
@@ -92,7 +84,7 @@ function ServiceCard({ service, index }: { service: AWSService; index: number })
       ) : (
         <div className="mb-3">
           <div className="flex items-center justify-between text-[10px] mb-1">
-            <span className="text-muted-foreground">Health</span>
+            <span className="text-muted-foreground">Active</span>
             <span className="font-medium text-muted-foreground">No resources</span>
           </div>
           <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
